@@ -26,9 +26,12 @@ if (setup == 1 or setup == 2):
 
 if setup == 2:
     os.system("brew install git")
-    os.system("brew install emacs --with-cocoa --with-gnutls --with-rsvg --with-imagemagick")
     os.system("brew cask install iterm2")
     os.system("brew install node")
     os.system("npm install --global pokemon-terminal")
     os.system("brew cask install emacs")
+    os.system("wget ter.ps/chumsetup -O init.el")
+    os.system("mv init.el ~/emacs.d/")
     os.system("brew cask install google-chrome")
+    os.system("brew cask install marshallofsound-google-play-music-player")
+    os.system("git clone https://github.com/chuemmer-coding/MacSetup.git")
