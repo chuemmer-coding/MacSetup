@@ -36,6 +36,10 @@
 (setq-default c-basic-offset 3) ;;C indentation
 (fset 'yes-or-no-p 'y-or-n-p) ;;lets you type y instead of yes
 
+;;TO PREVENT MERLIN FROM SCREWING ME AND CLOSING MY EMACS, LET'S CHANGE
+;;C-X C-C TO SOMETHING ELSE
+(global-set-key (kbd "C-x C-c") 'er/expand-region)
+
 ;;If 'use-package' is not installed install it
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -60,7 +64,7 @@
   (use-package origami
     :ensure t
     :init (global-origami-mode t))
-  )
+  
 
 (use-package challenger-deep-theme
   :ensure t
@@ -109,6 +113,19 @@
   :ensure t
   :init
   (global-set-key (kbd "M-f") 'ace-mc-add-multiple-cursors)
+)
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+(use-package tuareg
+  :ensure t
+  :init
+  ;;(autoload 'utop-minor-mode "utop" "Minor mode for utop" t)
+  ;;(add-hook 'tuareg-mode-hook 'utop-minor-mode)
+  (add-hook 'tuareg-mode-hook 'merlin-mode)
+  (add-hook 'tuareg-mode-hook #'merlin-mode)
+  (add-hook 'caml-mode-hook #'merlin-mode) ; If you really like to use Caml Mode
 )
 
 ;; merlin is super good/useful for debugging ocaml, it will
@@ -186,22 +203,22 @@
 	  )
 	;; more compile commands can be added here.
 	)
-  (defun bury-compile-buffer-if-successful (buffer string)
-    "Bury a compilation buffer if succeeded without warnings "
-    ;; can be annoying with build tools like ant
-    (when (and
-	   (buffer-live-p buffer)
-	   (string-match "compilation" (buffer-name buffer))
-	   (string-match "finished" string)
-	   (not
-	    (with-current-buffer buffer
-	      (goto-char (point-min))
-	      (search-forward "warning" nil t))))
-      (run-with-timer 1 nil
-		      (lambda (buf)
-			(bury-buffer buf)
-			(switch-to-prev-buffer (get-buffer-window buf) 'kill))
-		      buffer)))
+;;  (defun bury-compile-buffer-if-successful (buffer string)
+;;    "Bury a compilation buffer if succeeded without warnings "
+;;    ;; can be annoying with build tools like ant
+;;    (when (and
+;;	   (buffer-live-p buffer)
+;;	   (string-match "compilation" (buffer-name buffer))
+;;	   (string-match "finished" string)
+;;	   (not
+;;	    (with-current-buffer buffer
+;;	      (goto-char (point-min))
+;;	      (search-forward "warning" nil t))))
+;;      (run-with-timer 1 nil
+;;		      (lambda (buf)
+;;			(bury-buffer buf)
+;;			(switch-to-prev-buffer (get-buffer-window buf) 'kill))
+;;		      buffer)))
   (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
   )
 
@@ -274,13 +291,27 @@
 ;;  (add-hook 'org-mode-hook 'fill-setup)
 ;;  )
 
+;;TESTING RUST MODE
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (tango-dark)))
+ '(custom-enabled-themes (quote (challenger-deep)))
  '(delete-selection-mode nil)
  '(inhibit-startup-screen t)
+ '(package-selected-packages
+   (quote
+    (rust-playground racer flycheck-rust rust-mode multi-compile expand-region company flycheck merlin ace-mc iedit neotree dashboard challenger-deep-theme use-package origami evil)))
  '(show-paren-mode t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
